@@ -3,23 +3,19 @@ import socket
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(('localhost', 1234))
 
-op = -1
+option = -1
 
-while (op != '0'):
-    print('Escolha uma das opcoes do menu:\n')
-    print('1- requisitar o armazenamento de um arquivo.\n')
-    print('2- requisitar a lista de arquivos disponiveis.\n')
-    print('3- requisitar um dos arquivos armazenados.\n')
-    print('0- sair\n')
+while (option != '0'):
+    print("Select the option:\n(1) Upload\n(2) Download\n(3) List\n(0)Logout\n")
 
-    op = input('Digite a opcao desejada: ')
+    option = input("What do you want to do?: ")
     # envia p/ o servidor a opcao desejada
-    client.send(op.encode())
+    client.send(option.encode())
 
     # cliente manda arquivo para o servidor
-    if(op == '1'):
+    if(option == '1'):
         # nome do arquivo que o cliente deseja enviar
-        namefile = str(input('Arquivo:'))
+        namefile = str(input('File Name:'))
 
         # envia para o servidor o nome do arquivo
         client.send(namefile.encode())
@@ -29,28 +25,28 @@ while (op != '0'):
             for data in file.readlines():
                 client.send(data)
 
-        print('Arquivo enviado para o servidor')
+        print('File Sent!')
 
         client.close()
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(('localhost', 1234))
 
     # requisitar lista de arquivos no repositorio
-    elif(op == '2'):
-        print('Lista de arquivos disponiveis no servidor:\n')
+    elif(option == '2'):
+        print('Files on the server\n')
         while 1:
-            arqui = client.recv(1000000).decode()
-            if not arqui:
+            arch = client.recv(1000000).decode()
+            if not arch:
                 break
-            print(arqui)
+            print(arch)
         client.close()
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(('localhost', 1234))
 
     # servidor retorna um arquivo para o cliente
-    elif(op == '3'):
+    elif(option == '3'):
         # nome do arquivo desejado pelo cliente
-        namefile = str(input('Arquivo:'))
+        namefile = str(input('File name:'))
 
         # envia o nome do arquivo para o servidor
         client.send(namefile.encode())
@@ -68,6 +64,6 @@ while (op != '0'):
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect(('localhost', 1234))
 
-    elif(op == '0'):
-        print('cliente desconectado')
+    elif(option == '0'):
+        print('Disconnected!!')
         client.close()

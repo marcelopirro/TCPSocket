@@ -6,17 +6,18 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # servidor ouvindo a porta 1234
 server.bind(('localhost', 1234))
 server.listen(1)
+print("waiting for connection...")
 
 while(1):
     # conexao com o cliente
     connection, address = server.accept()
-    print('\nCliente conectado')
+    print('\nconnected client')
 
     # recebe a opcao desejada do cliente
-    op = connection.recv(1024).decode()
+    option = connection.recv(1024).decode()
 
     # recebe um arquivo enviado pelo cliente
-    if(op == '1'):
+    if(option == '1'):
         # recebe o nome do arquivo que sera enviado pelo cliente
         namefile = connection.recv(1024).decode()
 
@@ -28,11 +29,10 @@ while(1):
                     break
                 file.write(data)
 
-        print(f'{namefile} recebido\n')
+        print(f'{namefile} Received!\n')
 
     # lista os arquivos disponiveis
-    elif(op == '2'):
-        print('Enviando lista de arquivos...')
+    elif(option == '2'):
         for root, dirs, files in os.walk(".", topdown=False):
             for name in files:
                 connection.send(os.path.join(root, name).encode())
@@ -40,7 +40,7 @@ while(1):
                 connection.send(os.path.join(root, name).encode())
 
     # envia um arquivo solicitado pelo cliente
-    elif(op == '3'):
+    elif(option == '3'):
         # recebe o nome do arquivo requisitado pelo cliente
         namefile = connection.recv(1024).decode()
 
@@ -49,7 +49,7 @@ while(1):
             for data in file.readlines():
                 connection.send(data)
 
-        print('Arquivo enviado para o cliente')
+        print('File Sent!')
     elif(op == '0'):
-        print('Cliente desconectado')
+        print('Client disconnected')
     connection.close()
