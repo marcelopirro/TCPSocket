@@ -11,7 +11,7 @@ SERVER_DATA_PATH = "server_data"
 
 def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
-    conn.send("OK@Welcome to the File Server.".encode(FORMAT))
+    conn.send("OK@Welcome to the File Server.\nTape 'HELP' to view the commands and to see the instruction:\nLIST\nUPLOAD\nRECEIVE\nLOGOUT".encode(FORMAT))
 
     while True:
         data = conn.recv(SIZE).decode(FORMAT)
@@ -59,8 +59,8 @@ def handle_client(conn, addr):
             data = "OK@"
             data += "LIST: List all the files from the server.\n"
             data += "UPLOAD <path>: Upload a file to the server.\n"
-            data += "DELETE <filename>: Delete a file from the server.\n"
-            data += "LOGOUT: Disconnect from the server.\n"
+            data += "RECEIVE <filename>: Download a file from the server.\n"
+            data += "LOGOUT: Disconnect.\n"
             data += "HELP: List all the commands."
 
             conn.send(data.encode(FORMAT))
