@@ -1,18 +1,20 @@
 import socket
+#define the IP Port:
+PORT = 4456
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(('localhost', 1234))
+client.connect(('localhost', PORT))
 
 option = -1
 
 while (option != '0'):
-    print("Select the option:\n(1) Upload\n(2) List\n(3) Download\n(0) Logout\n")
+    print("Select the option (1, 2, 3 or 0):\n(1) Upload\n(2) List\n(3) Download\n(0) Logout\n")
 
     option = input("What do you want to do?: ")
-    # envia p/ o servidor a opcao desejada
+    #send the selected option
     client.send(option.encode())
 
-    # cliente manda arquivo para o servidor
+    #OPTION (1):The Client sends a file to the Server
     if(option == '1'):
         namefile = str(input('File Name:'))
         client.send(namefile.encode())
@@ -25,21 +27,22 @@ while (option != '0'):
 
         client.close()
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(('localhost', 1234))
+        client.connect(('localhost', PORT))
 
-    # requisitar lista de arquivos no repositorio
+    #OPTION (2): List the files available on the Server
     elif(option == '2'):
-        print('Files on the server\n')
+        print('Files on the server:\n')
         while 1:
             arch = client.recv(1000000).decode()
             if not arch:
                 break
             print(arch)
+        print("\n")
         client.close()
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(('localhost', 1234))
+        client.connect(('localhost', PORT))
 
-    # servidor retorna um arquivo para o cliente
+    #OPTION (3): The Server sends a file from the Client
     elif(option == '3'):
 
         namefile = str(input('File name:'))
@@ -50,11 +53,11 @@ while (option != '0'):
                 if not data:
                     break
                 file.write(data)
-        print(f'{namefile} recebido\n')
+        print(f'{namefile} Received!\n')
 
         client.close()
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.connect(('localhost', 1234))
+        client.connect(('localhost', PORT))
 
     elif(option == '0'):
         print('Disconnected!!')

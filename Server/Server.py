@@ -1,23 +1,26 @@
 import socket
 import os
+#define the IP Port:
+PORT = 4456
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(('localhost', 1234))
+server.bind(('localhost', PORT))
 server.listen(1)
 print("waiting for connection...")
 
 while(True):
-    # conexao com o cliente
+    #establishing connection with the Client
     connection, address = server.accept()
     print('\nConnected client')
 
-    # recebe a opcao desejada do cliente
+    #receive the selected option
     option = connection.recv(1024).decode()
 
-    # recebe um arquivo enviado pelo cliente
+    #OPTION (1): The Server receives a file from the Client
     if(option == '1'):
+        #receive the file name
         namefile = connection.recv(1024).decode()
-
+        #save the file
         with open(namefile, 'wb') as file:
             while 1:
                 data = connection.recv(1000000)
@@ -27,7 +30,7 @@ while(True):
 
         print(f'{namefile} Received!\n')
 
-    # lista os arquivos disponiveis
+    #OPTION (2): List the files available on the Server
     elif(option == '2'):
         for root, dirs, files in os.walk(".", topdown=False):
             for name in files:
@@ -35,8 +38,9 @@ while(True):
             for name in dirs:
                 connection.send(os.path.join(root, name).encode())
 
-    # envia um arquivo solicitado pelo cliente
+    #OPTION (3):The Server sends a file to the Client
     elif(option == '3'):
+        print("Listing the Files")
         namefile = connection.recv(1024).decode()
         with open(namefile, 'rb') as file:
             for data in file.readlines():
